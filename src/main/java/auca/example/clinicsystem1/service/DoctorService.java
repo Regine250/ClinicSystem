@@ -104,4 +104,58 @@ public class DoctorService {
         doctorRepo.deleteById(id);
         return "Doctor deleted successfully";
     }
+
+    public String addSpecializationToDoctor(UUID doctorId, UUID specializationId) {
+        Doctor doctor = doctorRepo.findById(doctorId).orElse(null);
+        if (doctor == null) {
+            return "The doctor with that id does not exist";
+        }
+        Specialization spec = specializationRepo.findById(specializationId).orElse(null);
+        if (spec == null) {
+            return "That specialization does not exist";
+        }
+        if (doctor.getSpecializations().contains(spec)) {
+            return "The doctor already has that specialization";
+        }
+        doctor.getSpecializations().add(spec);
+        doctorRepo.save(doctor);
+        return "Specialization added to the doctor";
+    }
+
+    public String removeSpecializationFromDoctor(UUID doctorId, UUID specializationId) {
+        Doctor doctor = doctorRepo.findById(doctorId).orElse(null);
+        if (doctor == null) {
+            return "The doctor with that id does not exist";
+        }
+        Specialization spec = specializationRepo.findById(specializationId).orElse(null);
+        if (spec == null) {
+            return "That specialization does not exist";
+        }
+        if (!doctor.getSpecializations().contains(spec)) {
+            return "The doctor does not have that specialization";
+        }
+        doctor.getSpecializations().remove(spec);
+        doctorRepo.save(doctor);
+        return "Specialization removed from the doctor";
+    }
+
+    public String moveDoctorToOffice(UUID doctorId, int officeNumber) {
+        Doctor doctor = doctorRepo.findById(doctorId).orElse(null);
+        if (doctor == null) {
+            return "The doctor with that id does not exist";
+        }
+        Office office = officeRepo.findByOfficeNumber(officeNumber);
+        if (office == null) {
+            return "The office with that office number does not exist";
+        }
+        if (doctorRepo.existsByOffice(office)) {
+            if (doctor.getOffice() == null || !doctor.getOffice().getId().equals(office.getId())) {
+                return "That office is taken by other doctor";
+            }
+        }
+        doctor.setOffice(office);
+        doctorRepo.save(doctor);
+        return "Office changed successfully";
+    }
 }
+

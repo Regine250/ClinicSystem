@@ -11,7 +11,7 @@ import auca.example.clinicsystem1.model.domain.Doctor;
 import auca.example.clinicsystem1.service.DoctorService;
 
 @RestController
-@RequestMapping("/api/doctor")
+@RequestMapping({"/api/doctors", "/api/doctor"})
 public class DoctorController {
 
     @Autowired
@@ -57,4 +57,44 @@ public class DoctorController {
         }
         return new ResponseEntity<>(msg, HttpStatus.NOT_FOUND);
     }
+
+    @PutMapping("/{doctorId}/specializations/{specializationId}")
+    public ResponseEntity<?> addSpecializationToDoctor(@PathVariable UUID doctorId, @PathVariable UUID specializationId) {
+        String msg = doctorServ.addSpecializationToDoctor(doctorId, specializationId);
+        if (msg.equals("Specialization added to the doctor")) {
+            return new ResponseEntity<>(msg, HttpStatus.OK);
+        } else if (msg.equals("The doctor with that id does not exist") || msg.equals("That specialization does not exist")) {
+            return new ResponseEntity<>(msg, HttpStatus.NOT_FOUND);
+        } else if (msg.equals("The doctor already has that specialization")) {
+            return new ResponseEntity<>(msg, HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(msg, HttpStatus.BAD_REQUEST);
+    }
+
+    @DeleteMapping("/{doctorId}/specializations/{specializationId}")
+    public ResponseEntity<?> removeSpecializationFromDoctor(@PathVariable UUID doctorId, @PathVariable UUID specializationId) {
+        String msg = doctorServ.removeSpecializationFromDoctor(doctorId, specializationId);
+        if (msg.equals("Specialization removed from the doctor")) {
+            return new ResponseEntity<>(msg, HttpStatus.OK);
+        } else if (msg.equals("The doctor with that id does not exist") || msg.equals("That specialization does not exist")) {
+            return new ResponseEntity<>(msg, HttpStatus.NOT_FOUND);
+        } else if (msg.equals("The doctor does not have that specialization")) {
+            return new ResponseEntity<>(msg, HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(msg, HttpStatus.BAD_REQUEST);
+    }
+
+    @PatchMapping("/{doctorId}/office")
+    public ResponseEntity<?> moveDoctorToOffice(@PathVariable UUID doctorId, @RequestParam int officeNumber) {
+        String msg = doctorServ.moveDoctorToOffice(doctorId, officeNumber);
+        if (msg.equals("Office changed successfully")) {
+            return new ResponseEntity<>(msg, HttpStatus.OK);
+        } else if (msg.equals("The doctor with that id does not exist") || msg.equals("The office with that office number does not exist")) {
+            return new ResponseEntity<>(msg, HttpStatus.NOT_FOUND);
+        } else if (msg.equals("That office is taken by other doctor")) {
+            return new ResponseEntity<>(msg, HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(msg, HttpStatus.BAD_REQUEST);
+    }
 }
+

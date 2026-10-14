@@ -11,7 +11,7 @@ import auca.example.clinicsystem1.model.domain.Office;
 import auca.example.clinicsystem1.service.OfficeService;
 
 @RestController
-@RequestMapping("/api/office")
+@RequestMapping({"/api/offices", "/api/office"})
 public class OfficeController {
 
     @Autowired
@@ -29,6 +29,11 @@ public class OfficeController {
     @GetMapping("/all")
     public ResponseEntity<?> getAllOffices() {
         return new ResponseEntity<>(officeServ.getAllOffices(), HttpStatus.OK);
+    }
+
+    @GetMapping("/free")
+    public ResponseEntity<?> getFreeOffices() {
+        return new ResponseEntity<>(officeServ.getFreeOffices(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -58,3 +63,4 @@ public class OfficeController {
         return new ResponseEntity<>(msg, HttpStatus.NOT_FOUND);
     }
 }
+
