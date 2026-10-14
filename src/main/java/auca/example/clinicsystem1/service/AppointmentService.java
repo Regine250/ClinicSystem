@@ -1,12 +1,15 @@
 package auca.example.clinicsystem1.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import auca.example.clinicsystem1.model.domain.Appointment;
+import auca.example.clinicsystem1.model.domain.AppointmentStatus;
 import auca.example.clinicsystem1.model.domain.Doctor;
 import auca.example.clinicsystem1.model.domain.Patient;
 import auca.example.clinicsystem1.repository.AppointmentRepository;
@@ -26,6 +29,11 @@ public class AppointmentService {
     private DoctorRepository doctorRepo;
 
     public String saveAppointment(Appointment appointment) {
+        if (appointment.getAppointmentDate() != null && appointment.getAppointmentDate().isBefore(LocalDate.now())) {
+            return "Appointment date cannot be in the past";
+        }
+        appointment.setStatus(AppointmentStatus.SCHEDULED);
+
         if (appointment.getPatient() != null && appointment.getPatient().getId() != null) {
             Patient patient = patientRepo.findById(appointment.getPatient().getId()).orElse(null);
             if (patient == null) {
@@ -66,7 +74,7 @@ public class AppointmentService {
 
         appointment.setAppointmentDate(newData.getAppointmentDate());
         appointment.setReason(newData.getReason());
-        appointment.setStatus(newData.getStatus());
+        // Status is not changed here per B2 rule
 
         if (newData.getPatient() != null && newData.getPatient().getId() != null) {
             Patient patient = patientRepo.findById(newData.getPatient().getId()).orElse(null);
@@ -95,4 +103,49 @@ public class AppointmentService {
         appointmentRepo.deleteById(id);
         return "Appointment deleted successfully";
     }
+
+    public String updateStatus(UUID id, AppointmentStatus status) {
+        Appointment appointment = appointmentRepo.findById(id).orElse(null);
+        if (appointment == null) {
+            return "The appointment with that id does not exist";
+        }
+        AppointmentStatus current = appointment.getStatus();
+        boolean allowed = false;
+        if (current == AppointmentStatus.SCHEDULED) {
+            if (status == AppointmentStatus.CONFIRMED || status == AppointmentStatus.CANCELLED) {
+                allowed = true;
+            }
+        } else if (current == AppointmentStatus.CONFIRMED) {
+            if (status == AppointmentStatus.COMPLETED || status == AppointmentStatus.CANCELLED) {
+                allowed = true;
+            }
+        }
+        if (!allowed) {
+            return "Cannot change status from " + current + " to " + status;
+        }
+        appointment.setStatus(status);
+        appointmentRepo.save(appointment);
+        return "Appointment status updated successfully";
+    }
+
+    public String rescheduleAppointment(UUID id, LocalDate newDate) {
+        Appointment appointment = appointmentRepo.findById(id).orElse(null);
+        if (appointment == null) {
+            return "The appointment with that id does not exist";
+        }
+        if (appointment.getStatus() == AppointmentStatus.COMPLETED || appointment.getStatus() == AppointmentStatus.CANCELLED) {
+            return "A " + appointment.getStatus() + " appointment cannot be rescheduled";
+        }
+        if (newDate.isBefore(LocalDate.now())) {
+            return "Appointment date cannot be in the past";
+        }
+        if (appointmentRepo.existsByDoctorAndAppointmentDateAndStatusNot(appointment.getDoctor(), newDate, AppointmentStatus.CANCELLED)) {
+            return "Doctor is already booked on that date";
+        }
+        appointment.setAppointmentDate(newDate);
+        appointment.setStatus(AppointmentStatus.SCHEDULED);
+        appointmentRepo.save(appointment);
+        return "Appointment rescheduled successfully";
+    }
 }
+

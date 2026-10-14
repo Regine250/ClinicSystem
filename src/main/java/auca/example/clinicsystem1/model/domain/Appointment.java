@@ -1,6 +1,6 @@
 package auca.example.clinicsystem1.model.domain;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -23,7 +23,7 @@ public class Appointment {
     private UUID id;
 
     @Column(name = "appointment_date")
-    private Date appointmentDate;
+    private LocalDate appointmentDate;
 
     @Column(name = "reason")
     private String reason;
@@ -51,13 +51,14 @@ public class Appointment {
         this.id = id;
     }
 
-    public Date getAppointmentDate() {
+    public LocalDate getAppointmentDate() {
         return appointmentDate;
     }
 
-    public void setAppointmentDate(Date appointmentDate) {
+    public void setAppointmentDate(LocalDate appointmentDate) {
         this.appointmentDate = appointmentDate;
     }
+
 
     public String getReason() {
         return reason;
