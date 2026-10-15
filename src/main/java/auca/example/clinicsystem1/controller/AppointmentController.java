@@ -54,7 +54,7 @@ public class AppointmentController {
         return new ResponseEntity<>(msg, HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping({"/delete/{id}", "/{id}"})
     public ResponseEntity<?> deleteAppointment(@PathVariable UUID id) {
         String msg = appointmentServ.deleteAppointment(id);
         if (msg.equals("Appointment deleted successfully")) {
@@ -95,4 +95,3 @@ public class AppointmentController {
         return new ResponseEntity<>(msg, HttpStatus.BAD_REQUEST);
     }
 }
-

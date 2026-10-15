@@ -1,12 +1,16 @@
 package auca.example.clinicsystem1.controller;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import auca.example.clinicsystem1.model.domain.Appointment;
 import auca.example.clinicsystem1.model.domain.Doctor;
 import auca.example.clinicsystem1.service.DoctorService;
 
@@ -95,6 +99,32 @@ public class DoctorController {
             return new ResponseEntity<>(msg, HttpStatus.CONFLICT);
         }
         return new ResponseEntity<>(msg, HttpStatus.BAD_REQUEST);
+    }
+
+    // D1: Doctor's agenda for a day
+    @GetMapping("/{doctorId}/agenda")
+    public ResponseEntity<?> getDoctorAgenda(
+            @PathVariable UUID doctorId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        List<Appointment> agenda = doctorServ.getDoctorAgenda(doctorId, date);
+        if (agenda == null) {
+            return new ResponseEntity<>("The doctor with that id does not exist", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(agenda, HttpStatus.OK);
+    }
+
+    // D3: Search doctors by name
+    @GetMapping("/search")
+    public ResponseEntity<?> searchDoctors(@RequestParam String name) {
+        return new ResponseEntity<>(doctorServ.searchDoctorsByName(name), HttpStatus.OK);
+    }
+
+    // Bonus 2: Doctor workload
+    @GetMapping("/workload")
+    public ResponseEntity<?> getDoctorWorkload(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
+        return new ResponseEntity<>(doctorServ.getDoctorWorkload(start, end), HttpStatus.OK);
     }
 }
 

@@ -1,0 +1,378 @@
+{
+	"info": {
+		"_postman_id": "c1f7a28e-5d1b-4f9e-9a67-clinic-quiz2",
+		"name": "Clinic Quiz 2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "A1: Add specialization to doctor",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8084/api/doctors/{{doctorId}}/specializations/{{specializationId}}",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8084",
+					"path": ["api", "doctors", "{{doctorId}}", "specializations", "{{specializationId}}"]
+				}
+			}
+		},
+		{
+			"name": "A2: Remove specialization from doctor",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8084/api/doctors/{{doctorId}}/specializations/{{specializationId}}",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8084",
+					"path": ["api", "doctors", "{{doctorId}}", "specializations", "{{specializationId}}"]
+				}
+			}
+		},
+		{
+			"name": "A3: Free offices",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8084/api/offices/free",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8084",
+					"path": ["api", "offices", "free"]
+				}
+			}
+		},
+		{
+			"name": "A4: Move doctor to another office",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8084/api/doctors/{{doctorId}}/office?officeNumber=104",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8084",
+					"path": ["api", "doctors", "{{doctorId}}", "office"],
+					"query": [
+						{
+							"key": "officeNumber",
+							"value": "104"
+						}
+					]
+				}
+			}
+		},
+		{
+			"name": "B1: Safe booking",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"appointmentDate\": \"2026-10-25\",\n    \"reason\": \"Routine checkup\",\n    \"status\": \"COMPLETED\",\n    \"patient\": {\n        \"id\": \"{{patientId}}\"\n    },\n    \"doctor\": {\n        \"id\": \"{{doctorId}}\"\n    }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8084/api/appointments/save",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8084",
+					"path": ["api", "appointments", "save"]
+				}
+			}
+		},
+		{
+			"name": "B2: Status flow",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8084/api/appointments/{{appointmentId}}/status?status=CONFIRMED",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8084",
+					"path": ["api", "appointments", "{{appointmentId}}", "status"],
+					"query": [
+						{
+							"key": "status",
+							"value": "CONFIRMED"
+						}
+					]
+				}
+			}
+		},
+		{
+			"name": "B3: Reschedule appointment",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8084/api/appointments/{{appointmentId}}/reschedule?newDate=2026-10-30",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8084",
+					"path": ["api", "appointments", "{{appointmentId}}", "reschedule"],
+					"query": [
+						{
+							"key": "newDate",
+							"value": "2026-10-30"
+						}
+					]
+				}
+			}
+		},
+		{
+			"name": "C1: Write prescription",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"medicineName\": \"Amoxicillin\",\n    \"dosage\": \"1 tablet, 3 times a day\",\n    \"durationDays\": 7\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8084/api/prescriptions/save?appointmentId={{completedAppointmentId}}",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8084",
+					"path": ["api", "prescriptions", "save"],
+					"query": [
+						{
+							"key": "appointmentId",
+							"value": "{{completedAppointmentId}}"
+						}
+					]
+				}
+			}
+		},
+		{
+			"name": "C2: Prescriptions of an appointment",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8084/api/prescriptions/appointment/{{appointmentId}}",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8084",
+					"path": ["api", "prescriptions", "appointment", "{{appointmentId}}"]
+				}
+			}
+		},
+		{
+			"name": "C3: Prescription history of a patient",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8084/api/prescriptions/patient/{{ssNumber}}",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8084",
+					"path": ["api", "prescriptions", "patient", "{{ssNumber}}"]
+				}
+			}
+		},
+		{
+			"name": "C4: Update prescription",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"medicineName\": \"Amoxicillin 500mg\",\n    \"dosage\": \"1 tablet twice a day\",\n    \"durationDays\": 5\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8084/api/prescriptions/update/{{prescriptionId}}",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8084",
+					"path": ["api", "prescriptions", "update", "{{prescriptionId}}"]
+				}
+			}
+		},
+		{
+			"name": "C4: Delete prescription",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8084/api/prescriptions/delete/{{prescriptionId}}",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8084",
+					"path": ["api", "prescriptions", "delete", "{{prescriptionId}}"]
+				}
+			}
+		},
+		{
+			"name": "C4: Delete appointment (protected)",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8084/api/appointments/delete/{{appointmentId}}",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8084",
+					"path": ["api", "appointments", "delete", "{{appointmentId}}"]
+				}
+			}
+		},
+		{
+			"name": "D1: Doctor agenda for a day",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8084/api/doctors/{{doctorId}}/agenda?date=2026-10-20",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8084",
+					"path": ["api", "doctors", "{{doctorId}}", "agenda"],
+					"query": [
+						{
+							"key": "date",
+							"value": "2026-10-20"
+						}
+					]
+				}
+			}
+		},
+		{
+			"name": "D2: Upcoming appointments of a patient",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8084/api/patients/{{ssNumber}}/upcoming",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8084",
+					"path": ["api", "patients", "{{ssNumber}}", "upcoming"]
+				}
+			}
+		},
+		{
+			"name": "D3: Search doctors by name",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8084/api/doctors/search?name=gis",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8084",
+					"path": ["api", "doctors", "search"],
+					"query": [
+						{
+							"key": "name",
+							"value": "gis"
+						}
+					]
+				}
+			}
+		},
+		{
+			"name": "D4: Clinic dashboard",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8084/api/dashboard/summary",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8084",
+					"path": ["api", "dashboard", "summary"]
+				}
+			}
+		},
+		{
+			"name": "Bonus: Most prescribed medicines",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8084/api/prescriptions/stats/top-medicines",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8084",
+					"path": ["api", "prescriptions", "stats", "top-medicines"]
+				}
+			}
+		},
+		{
+			"name": "Bonus: Doctor workload",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8084/api/doctors/workload?start=2026-10-01&end=2026-10-31",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8084",
+					"path": ["api", "doctors", "workload"],
+					"query": [
+						{
+							"key": "start",
+							"value": "2026-10-01"
+						},
+						{
+							"key": "end",
+							"value": "2026-10-31"
+						}
+					]
+				}
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "doctorId",
+			"value": ""
+		},
+		{
+			"key": "specializationId",
+			"value": ""
+		},
+		{
+			"key": "patientId",
+			"value": ""
+		},
+		{
+			"key": "appointmentId",
+			"value": ""
+		},
+		{
+			"key": "completedAppointmentId",
+			"value": ""
+		},
+		{
+			"key": "prescriptionId",
+			"value": ""
+		},
+		{
+			"key": "ssNumber",
+			"value": ""
+		}
+	]
+}

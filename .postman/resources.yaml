@@ -1,0 +1,7 @@
+# Use this workspace to collaborate
+workspace:
+  id: 03f0c237-df73-4792-bd99-72e7a8ee0168
+
+localResources:
+  collections:
+    - ../clinic-quiz2.postman_collection.json

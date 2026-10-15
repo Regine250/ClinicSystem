@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -43,8 +44,8 @@ public class Doctor {
     @ManyToMany
     @JoinTable(
             name = "doctor_specialization",
-            joinColumns = @JoinColumn(name = "doctor_id"),
-            inverseJoinColumns = @JoinColumn(name = "specialization_id")
+            joinColumns = @JoinColumn(name = "doctor_id", foreignKey = @ForeignKey(name = "fk_doctor_specialization_doctor")),
+            inverseJoinColumns = @JoinColumn(name = "specialization_id", foreignKey = @ForeignKey(name = "fk_doctor_specialization_specialization"))
     )
     private List<Specialization> specializations = new ArrayList<>();
 

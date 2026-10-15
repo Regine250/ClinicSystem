@@ -11,7 +11,7 @@ import auca.example.clinicsystem1.model.domain.Patient;
 import auca.example.clinicsystem1.service.PatientService;
 
 @RestController
-@RequestMapping("/api/patient")
+@RequestMapping({"/api/patients", "/api/patient"})
 public class PatientController {
 
     @Autowired
@@ -40,6 +40,15 @@ public class PatientController {
         return new ResponseEntity<>(patient, HttpStatus.OK);
     }
 
+    @GetMapping("/{ssNumber}/upcoming")
+    public ResponseEntity<?> getUpcomingAppointments(@PathVariable String ssNumber) {
+        Object result = patientServ.getUpcomingAppointments(ssNumber);
+        if (result == null) {
+            return new ResponseEntity<>("That patient with that ssnumber does not exist", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updatePatient(@PathVariable UUID id, @RequestBody Patient patient) {
         String msg = patientServ.updatePatient(id, patient);
@@ -58,3 +67,4 @@ public class PatientController {
         return new ResponseEntity<>(msg, HttpStatus.NOT_FOUND);
     }
 }
+

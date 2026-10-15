@@ -15,6 +15,7 @@ import auca.example.clinicsystem1.model.domain.Patient;
 import auca.example.clinicsystem1.repository.AppointmentRepository;
 import auca.example.clinicsystem1.repository.DoctorRepository;
 import auca.example.clinicsystem1.repository.PatientRepository;
+import auca.example.clinicsystem1.repository.PrescriptionRepository;
 
 @Service
 public class AppointmentService {
@@ -27,6 +28,10 @@ public class AppointmentService {
 
     @Autowired
     private DoctorRepository doctorRepo;
+
+    @Autowired
+    private PrescriptionRepository prescriptionRepo;
+
 
     public String saveAppointment(Appointment appointment) {
         if (appointment.getAppointmentDate() != null && appointment.getAppointmentDate().isBefore(LocalDate.now())) {
@@ -97,12 +102,17 @@ public class AppointmentService {
     }
 
     public String deleteAppointment(UUID id) {
-        if (!appointmentRepo.existsById(id)) {
+        Appointment appointment = appointmentRepo.findById(id).orElse(null);
+        if (appointment == null) {
             return "Appointment not found";
+        }
+        if (prescriptionRepo.existsByAppointment(appointment)) {
+            return "That appointment has prescriptions, delete them first";
         }
         appointmentRepo.deleteById(id);
         return "Appointment deleted successfully";
     }
+
 
     public String updateStatus(UUID id, AppointmentStatus status) {
         Appointment appointment = appointmentRepo.findById(id).orElse(null);

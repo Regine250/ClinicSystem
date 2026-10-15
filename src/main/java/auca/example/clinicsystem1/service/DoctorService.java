@@ -1,5 +1,6 @@
 package auca.example.clinicsystem1.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -7,9 +8,12 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import auca.example.clinicsystem1.model.domain.Appointment;
+import auca.example.clinicsystem1.model.domain.AppointmentStatus;
 import auca.example.clinicsystem1.model.domain.Doctor;
 import auca.example.clinicsystem1.model.domain.Office;
 import auca.example.clinicsystem1.model.domain.Specialization;
+import auca.example.clinicsystem1.repository.AppointmentRepository;
 import auca.example.clinicsystem1.repository.DoctorRepository;
 import auca.example.clinicsystem1.repository.OfficeRepository;
 import auca.example.clinicsystem1.repository.SpecializationRepository;
@@ -25,6 +29,9 @@ public class DoctorService {
 
     @Autowired
     private SpecializationRepository specializationRepo;
+
+    @Autowired
+    private AppointmentRepository appointmentRepo;
 
     public String saveDoctor(Doctor doctor) {
         if (doctor.getOffice() != null && doctor.getOffice().getId() != null) {
@@ -156,6 +163,25 @@ public class DoctorService {
         doctor.setOffice(office);
         doctorRepo.save(doctor);
         return "Office changed successfully";
+    }
+
+    // D1: Doctor's agenda for a day (without CANCELLED ones)
+    public List<Appointment> getDoctorAgenda(UUID doctorId, LocalDate date) {
+        Doctor doctor = doctorRepo.findById(doctorId).orElse(null);
+        if (doctor == null) {
+            return null;
+        }
+        return appointmentRepo.findByDoctorAndAppointmentDateAndStatusNot(doctor, date, AppointmentStatus.CANCELLED);
+    }
+
+    // D3: Search doctors by name
+    public List<Doctor> searchDoctorsByName(String name) {
+        return doctorRepo.searchByName(name);
+    }
+
+    // Bonus 2: Doctor workload
+    public List<Object[]> getDoctorWorkload(LocalDate start, LocalDate end) {
+        return doctorRepo.findDoctorWorkload(start, end);
     }
 }
 
